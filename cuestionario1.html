@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cuestionario — Tecnologías Móviles (Clase I)</title>
+  <style>
+    /* Reset y tipografía */
+    * { box-sizing: border-box; margin:0; padding:0; }
+    html,body { height:100%; }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      transition: background 0.4s, color 0.4s;
+      background: linear-gradient(135deg,#f4f4f9,#eaeaea);
+      color: #222;
+      -webkit-font-smoothing:antialiased;
+    }
+    body.dark {
+      background: linear-gradient(135deg,#0f0f0f,#1c1c1c);
+      color:#eee;
+    }
+
+    /* Header */
+    header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 28px;
+      background: linear-gradient(135deg,#4facfe,#00f2fe);
+      color: white;
+      border-bottom-left-radius: 28px;
+      border-bottom-right-radius: 28px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    header .left { display:flex; align-items:center; gap:14px; }
+    header img { width:56px; height:auto; object-fit:contain; /* SIN border-radius: mantiene forma original */ }
+    header h1 { margin:0; font-size:1.35rem; letter-spacing:1px; text-align:center; flex:1; }
+    .theme-toggle {
+      padding:8px 14px;
+      border:none;
+      border-radius:999px;
+      background: linear-gradient(135deg,#ff9a9e,#fad0c4);
+      font-weight:700;
+      cursor:pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+      transition: transform .18s;
+    }
+    .theme-toggle:active { transform:scale(.98); }
+
+    /* Contenedor */
+    .wrap { max-width:1000px; margin:28px auto; padding:0 16px 80px; }
+
+    .intro {
+      background: rgba(255,255,255,0.85);
+      padding:18px;
+      border-radius:14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      margin-bottom:18px;
+    }
+    body.dark .intro { background: rgba(30,30,30,0.75); box-shadow: 0 6px 18px rgba(255,255,255,0.02); }
+
+    .intro h2 { font-size:1.15rem; margin-bottom:6px; }
+    .meta { font-size:0.95rem; color: #444; }
+    body.dark .meta { color:#cfcfcf; }
+
+    /* Herramientas (buscador, botones) */
+    .tools {
+      display:flex;
+      gap:10px;
+      margin:12px 0 18px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .search {
+      flex:1;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .search input {
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,0.08);
+      outline:none;
+      transition: box-shadow .18s, border-color .18s;
+      background:transparent;
+    }
+    .search input:focus { box-shadow:0 6px 18px rgba(0,0,0,0.08); border-color: rgba(0,0,0,0.14); }
+    .tools button {
+      padding:10px 12px;
+      border-radius:10px;
+      border:none;
+      cursor:pointer;
+      font-weight:700;
+      background: linear-gradient(135deg,#4facfe,#00f2fe);
+      color:white;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    }
+    .tools button.ghost { background: transparent; color: #333; border:1px solid rgba(0,0,0,0.06); box-shadow:none; }
+    body.dark .tools button.ghost { color:#eee; border-color: rgba(255,255,255,0.06); }
+
+    /* Acordeón */
+    .qa { margin-top:8px; display:grid; gap:10px; }
+    .q {
+      background: rgba(255,255,255,0.92);
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow: 0 8px 22px rgba(2,12,40,0.04);
+      transition: transform .12s;
+    }
+    body.dark .q { background: rgba(24,24,24,0.85); box-shadow: 0 6px 18px rgba(255,255,255,0.02); }
+
+    .q summary {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px 16px;
+      cursor:pointer;
+      list-style:none;
+      font-weight:700;
+      font-size:0.99rem;
+      user-select:none;
+    }
+    .q[open] { transform: translateY(-2px); }
+    .q p.answer {
+      padding:12px 16px 18px 16px;
+      color:#333;
+      line-height:1.45;
+      font-size:0.95rem;
+    }
+    body.dark .q p.answer { color:#ddd; }
+
+    .small { font-size:0.88rem; color:#666; }
+    body.dark .small { color:#bbb; }
+
+    /* Número y etiqueta */
+    .num {
+      display:inline-grid; place-items:center;
+      min-width:38px; height:38px; border-radius:10px;
+      background: linear-gradient(135deg,#ffdd8a,#ffb199);
+      color:#222; font-weight:800;
+    }
+    body.dark .num { filter:brightness(.95); }
+
+    /* Footer de fuentes */
+    .sources {
+      margin-top:18px;
+      padding:14px;
+      border-radius:12px;
+      background: rgba(255,255,255,0.75);
+      font-size:0.9rem;
+      color:#333;
+    }
+    body.dark .sources { background: rgba(30,30,30,0.7); color:#ddd; }
+
+    /* Responsivo */
+    @media (max-width:700px) {
+      header h1 { font-size:1.05rem; }
+      header img { width:48px; }
+      .num { min-width:34px; height:34px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="left">
+      <img src="images__1_-removebg-preview.png" alt="Logo del Instituto" id="logo">
+    </div>
+
+    <h1>Mi portafolio — Cuestionario</h1>
+
+    <button class="theme-toggle" id="themeBtn" title="Cambiar tema">🌙</button>
+  </header>
+
+  <main class="wrap" role="main">
+    
+
+    <div class="qa" id="qaList">
+      <!-- Cada bloque .q es una pregunta con detalle -->
+      <!-- Para accesibilidad usamos <details> + <summary> -->
+      
+      <details class="q" data-idx="1">
+        <summary><span class="num">1</span>&nbsp; ¿Cómo se definen las tecnologías móviles y qué impacto han tenido en la sociedad en las últimas décadas?</summary>
+        <p class="answer">
+          Las tecnologias moviles son los celulares, tablets y dispositivos que usan conexion inalambrica, han tenido gran impacto porque cambiaron la forma de comunicarnos, trabajar y estudiar en las ultimas decadas.
+        </p>
+      </details>
+
+      <details class="q" data-idx="2">
+        <summary><span class="num">2</span>&nbsp; ¿Qué elementos conforman el ecosistema móvil?</summary>
+        <p class="answer">
+          El ecosistema movil esta formado por los dispositivos, las aplicaciones, el internet y las empresas que brindan los servicios, todos trabajan juntos.
+        </p>
+      </details>
+
+      <details class="q" data-idx="3">
+        <summary><span class="num">3</span>&nbsp; ¿Qué se entiende por movilidad digital y por qué es importante en el mundo actual?</summary>
+        <p class="answer">
+          es poder usar la tecnologia en cualquier lugar y momento, es importante porque permite estar conectado siempre.
+        </p>
+      </details>
+
+      <details class="q" data-idx="4">
+        <summary><span class="num">4</span>&nbsp; ¿Cuántos usuarios móviles se proyectan para 2025 según el documento?</summary>
+        <p class="answer">
+        
+        </p>
+      </details>
+
+      <details class="q" data-idx="5">
+        <summary><span class="num">5</span>&nbsp; Explica cómo las tecnologías móviles han transformado la gestión empresarial y la educación.</summary>
+        <p class="answer">
+          en las empresas permitio el trabajo remoto, el comercio digital y mejor atencion a clientes, en la educacion posibilito clases virtuales y acceso rapido a informacion.
+        </p>
+      </details>
+
+      <details class="q" data-idx="6">
+        <summary><span class="num">6</span>&nbsp; ¿Qué sectores industriales han sido más impactados por las aplicaciones móviles? Menciona al menos tres.</summary>
+        <p class="answer">
+          Los sectores mas impactados son salud, transporte y comercio, todos cambiaron con el uso de aplicaciones moviles.
+        </p>
+      </details>
+
+      <details class="q" data-idx="7">
+        <summary><span class="num">7</span>&nbsp; ¿Cómo las aplicaciones móviles simplifican la vida cotidiana de los usuarios?</summary>
+        <p class="answer">  
+          Las aplicaciones simplifican la vida al facilitar la comunicacion, compras en linea, transporte y pagos desde el celular.
+        </p>
+      </details>
+
+      <details class="q" data-idx="8">
+        <summary><span class="num">8</span>&nbsp; ¿Qué papel cumplen la Inteligencia Artificial, la Realidad Aumentada y el Internet de las Cosas en las apps modernas?</summary>
+        <p class="answer">
+          La inteligencia artificial hace las apps mas inteligentes, la realidad aumentada agrega elementos digitales al mundo real y el internet de las cosas conecta aparatos y servicios.
+        </p>
+      </details>
+
+      <details class="q" data-idx="9">
+        <summary><span class="num">9</span>&nbsp; Explica la relevancia de las redes sociales y la mensajería instantánea en la conectividad social.</summary>
+        <p class="answer">
+          las redes sociales y la mensajeria instantanea son claves para mantener la conectividad y las relaciones entre personas.
+        </p>
+      </details>
+
+      <details class="q" data-idx="10">
+        <summary><span class="num">10</span>&nbsp; ¿Cómo contribuyen las aplicaciones móviles a la productividad empresarial?</summary>
+        <p class="answer">
+          Las aplicaciones aumentan la productividad empresarial porque ayudan a organizar, comunicarse y vender con mas rapidez.
+      </details>
+
+      <details class="q" data-idx="11">
+        <summary><span class="num">11</span>&nbsp; Menciona un beneficio clave del comercio móvil para la economía.</summary>
+        <p class="answer">
+          El comercio movil ayuda a la economia porque permite mas ventas rapidas y accesibles para los usuarios.
+      </details>
+
+      <details class="q" data-idx="12">
+        <summary><span class="num">12</span>&nbsp; ¿Cuántos usuarios de mensajería móvil se proyectan para 2025?</summary>
+        <p class="answer">
+          Para el 2025 se proyectan mas de 3 o 4 mil millones de usuarios de mensajeria movil.
+        </p>
+      </details>
+
+      <details class="q" data-idx="13">
+        <summary><span class="num">13</span>&nbsp; ¿Qué características hicieron de WhatsApp, Uber y TikTok aplicaciones transformadoras?</summary>
+        <p class="answer">
+          WhatsApp transformo la forma de comunicarse gratis, Uber cambio el transporte urbano y TikTok revoluciono el consumo de videos cortos.
+        </p>
+      </details>
+
+      <details class="q" data-idx="14">
+        <summary><span class="num">14</span>&nbsp; ¿Qué beneficios aportan las aplicaciones de hogares inteligentes y de salud móvil?</summary>
+        <p class="answer">
+          Las aplicaciones de hogar inteligente permiten controlar luces, camaras y electrodomesticos, en salud ayudan a monitorear signos vitales y hacer consultas medicas.
+        </p>
+      </details>
+
+      <details class="q" data-idx="15">
+        <summary><span class="num">15</span>&nbsp; Define tecnología inalámbrica y su importancia en la experiencia móvil moderna.</summary>
+        <p class="answer">
+          La tecnologia inalambrica es la conexion sin cables como wifi, datos moviles y bluetooth, es esencial para la experiencia movil moderna.
+        </p>
+      </details>
+
+      <details class="q" data-idx="16">
+        <summary><span class="num">16</span>&nbsp; Explica las características principales de las tecnologías: 5G, Wi-Fi 6/7 y Bluetooth.</summary>
+        <p class="answer">
+          5G ofrece velocidad alta y baja latencia, WiFi 6 y 7 mejoran la estabilidad y cobertura, Bluetooth conecta dispositivos cercanos con poco consumo de energia.
+        </p>
+      </details>
+
+      <details class="q" data-idx="17">
+        <summary><span class="num">17</span>&nbsp; ¿Qué tecnologías emergentes se mencionan para ampliar la conectividad en el futuro?</summary>
+        <p class="answer">
+          Las tecnologias emergentes incluyen 6G, redes satelitales y nuevas soluciones para ampliar la conectividad en zonas aisladas.
+        </p>
+      </details>
+
+      <details class="q" data-idx="18">
+        <summary><span class="num">18</span>&nbsp; ¿Cómo contribuyen los sistemas V2X y las redes satelitales a la movilidad y la seguridad?</summary>
+        <p class="answer">
+         Los sistemas V2X permiten que los autos se comuniquen entre ellos y las redes satelitales dan cobertura en lugares alejados.
+      </details>
+
+      <details class="q" data-idx="19">
+        <summary><span class="num">19</span>&nbsp; ¿Qué desafíos emergentes plantea el futuro de las tecnologías móviles en términos de privacidad, ciberseguridad y brecha digital?</summary>
+        <p class="answer">
+          Los desafios del futuro son la privacidad de datos, la ciberseguridad y la brecha digital entre quienes tienen acceso y quienes no.
+        </p>
+      </details>
+
+      <details class="q" data-idx="20">
+        <summary><span class="num">20</span>&nbsp; ¿Por qué se afirma que la era móvil no es solo el futuro, sino el presente?</summary>
+        <p class="answer">
+          La era movil no es solo futuro sino presente porque ya usamos el celular para trabajar, estudiar, comprar y entretenernos.
+        </p>
+      </details>
+
+    </div>
+
+    
+
+  <script>
+    // Tema
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      // Cambiar emoji según tema
+      themeBtn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    });
+
+    // Buscador que filtra preguntas por texto
+    const searchInput = document.getElementById('searchInput');
+    const qaList = document.getElementById('qaList');
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.trim().toLowerCase();
+      const items = qaList.querySelectorAll('details.q');
+      items.forEach(item => {
+        const summary = item.querySelector('summary').innerText.toLowerCase();
+        const answer = item.querySelector('.answer').innerText.toLowerCase();
+        const visible = (!q) || summary.includes(q) || answer.includes(q);
+        item.style.display = visible ? '' : 'none';
+      });
+    });
+
+    // Expandir / contraer TODO
+    document.getElementById('expandAllBtn').addEventListener('click', () => {
+      qaList.querySelectorAll('details.q').forEach(d => d.open = true);
+    });
+    document.getElementById('collapseAllBtn').addEventListener('click', () => {
+      qaList.querySelectorAll('details.q').forEach(d => d.open = false);
+    });
+
+    // Imprimir solo la parte principal (ocultar controles)
+    document.getElementById('printBtn').addEventListener('click', () => {
+      window.print();
+    });
+
+    // Mejora accesibilidad: permitir toggle con Enter en summary
+    document.querySelectorAll('details.q summary').forEach(s => {
+      s.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const d = s.parentElement;
+          d.open = !d.open;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

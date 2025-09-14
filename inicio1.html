@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inicio</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      transition: background 0.5s, color 0.5s;
+      background: linear-gradient(135deg, #f4f4f9, #eaeaea);
+      color: #222;
+    }
+
+    body.dark {
+      background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+      color: #eee;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 30px;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: white;
+      border-bottom-left-radius: 40px;
+      border-bottom-right-radius: 40px;
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    body.dark header {
+      background: linear-gradient(135deg, #1f4037, #99f2c8);
+      color: #111;
+    }
+
+    header img {
+      width: 60px;
+      height: auto;
+      object-fit: contain;
+      border: none;
+      background: transparent;
+    }
+
+    header h1 {
+      flex: 1;
+      text-align: center;
+      font-size: 2em;
+      letter-spacing: 2px;
+    }
+
+    .theme-toggle {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      color: #333;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    body.dark .theme-toggle {
+      background: linear-gradient(135deg, #232526, #414345);
+      color: #fff;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .info {
+      background: rgba(255, 255, 255, 0.7);
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark .info {
+      background: rgba(40, 40, 40, 0.8);
+      box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.05);
+    }
+
+    .info h2 {
+      margin-bottom: 10px;
+      font-size: 1.6em;
+      color: #333;
+    }
+
+    body.dark .info h2 {
+      color: #f0f0f0;
+    }
+
+    .botones {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .botones a, .botones button {
+      display: block;
+      text-align: center;
+      padding: 15px;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .botones a:hover, .botones button:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    body.dark .botones a, body.dark .botones button {
+      background: linear-gradient(135deg, #667db6, #0082c8, #667db6);
+    }
+
+    /* Sub-botones ocultos */
+    .sub-botones {
+      display: none;
+      grid-column: span 2;
+      margin-top: -10px;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="images__1_-removebg-preview.png" alt="Logo del Instituto">
+    <h1>Mi portafolio</h1>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙Modo Oscuro</button>
+  </header>
+
+  <div class="container">
+    <div class="info">
+      <h2>APLICACIONES MÓVILES VI-B</h2>
+      <p><strong>Estudiante:</strong> Leonardo Aguirre Aranibar</p>
+      <p><strong>Carrera:</strong> Arquitectura de Plataformas y Servicios de Tecnologías de la Información (APSTI)</p>
+      <p><strong>Ciclo:</strong> VI-B</p>
+    </div>
+
+    <h2>Proyectos</h2>
+    
+    <div class="botones">
+      <a href="https://www.figma.com/design/qzrrSb6Up7VY9OXvwxizoh/Untitled?node-id=0-1&t=qrRJEWLvJ6iF9eDS-1&authuser=0">Semana I</a>
+      <button onclick="toggleSubBotones()">Semana II</button>
+      
+      <!-- Sub-botones -->
+      <div id="subBotones" class="sub-botones">
+        <a href="cuestionario1.html">Cuestionario 1</a>
+        <a href="cuestionario2.html">Cuestionario 2</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+    }
+
+    function toggleSubBotones() {
+      const sub = document.getElementById("subBotones");
+      if (sub.style.display === "none" || sub.style.display === "") {
+        sub.style.display = "grid";
+      } else {
+        sub.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>

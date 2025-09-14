@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cuestionario — Arquitectura Móvil</title>
+  <style>
+    /* Reset y tipografía */
+    * { box-sizing: border-box; margin:0; padding:0; }
+    html,body { height:100%; }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      transition: background 0.35s, color 0.35s;
+      background: linear-gradient(135deg,#f4f4f9,#eaeaea);
+      color: #222;
+      -webkit-font-smoothing:antialiased;
+    }
+    body.dark {
+      background: linear-gradient(135deg,#0f0f0f,#1c1c1c);
+      color:#eee;
+    }
+
+    /* Header */
+    header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 28px;
+      background: linear-gradient(135deg,#4facfe,#00f2fe);
+      color: white;
+      border-bottom-left-radius: 28px;
+      border-bottom-right-radius: 28px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    header .left { display:flex; align-items:center; gap:14px; }
+    header img { width:56px; height:auto; object-fit:contain; /* SIN border-radius para mantener forma original */ }
+    header h1 { margin:0; font-size:1.25rem; letter-spacing:1px; text-align:center; flex:1; }
+    .theme-toggle {
+      padding:8px 14px;
+      border:none;
+      border-radius:999px;
+      background: linear-gradient(135deg,#ff9a9e,#fad0c4);
+      font-weight:700;
+      cursor:pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+      transition: transform .18s;
+    }
+    .theme-toggle:active { transform:scale(.98); }
+
+    /* Contenedor */
+    .wrap { max-width:1000px; margin:28px auto; padding:0 16px 80px; }
+
+    .intro {
+      background: rgba(255,255,255,0.88);
+      padding:18px;
+      border-radius:14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      margin-bottom:18px;
+    }
+    body.dark .intro { background: rgba(30,30,30,0.78); box-shadow: 0 6px 18px rgba(255,255,255,0.02); }
+
+    .intro h2 { font-size:1.12rem; margin-bottom:6px; }
+    .meta { font-size:0.95rem; color: #444; }
+    body.dark .meta { color:#cfcfcf; }
+
+    /* Herramientas */
+    .tools {
+      display:flex;
+      gap:10px;
+      margin:12px 0 18px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .search { flex:1; display:flex; gap:8px; align-items:center; }
+    .search input {
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,0.08);
+      outline:none;
+      transition: box-shadow .18s, border-color .18s;
+      background:transparent;
+    }
+    .search input:focus { box-shadow:0 6px 18px rgba(0,0,0,0.08); border-color: rgba(0,0,0,0.14); }
+    .tools button {
+      padding:10px 12px;
+      border-radius:10px;
+      border:none;
+      cursor:pointer;
+      font-weight:700;
+      background: linear-gradient(135deg,#4facfe,#00f2fe);
+      color:white;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    }
+    .tools button.ghost { background: transparent; color: #333; border:1px solid rgba(0,0,0,0.06); box-shadow:none; }
+    body.dark .tools button.ghost { color:#eee; border-color: rgba(255,255,255,0.06); }
+
+    /* Acordeón */
+    .qa { margin-top:8px; display:grid; gap:10px; }
+    .q {
+      background: rgba(255,255,255,0.94);
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow: 0 8px 22px rgba(2,12,40,0.04);
+      transition: transform .12s;
+    }
+    body.dark .q { background: rgba(24,24,24,0.86); box-shadow: 0 6px 18px rgba(255,255,255,0.02); }
+
+    .q summary {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px 16px;
+      cursor:pointer;
+      list-style:none;
+      font-weight:700;
+      font-size:0.98rem;
+      user-select:none;
+    }
+    .q[open] { transform: translateY(-2px); }
+    .q p.answer {
+      padding:12px 16px 18px 16px;
+      color:#333;
+      line-height:1.45;
+      font-size:0.95rem;
+    }
+    body.dark .q p.answer { color:#ddd; }
+
+    .num {
+      display:inline-grid; place-items:center;
+      min-width:38px; height:38px; border-radius:10px;
+      background: linear-gradient(135deg,#bde0fe,#a0e9ff);
+      color:#022; font-weight:800;
+    }
+
+    .sources {
+      margin-top:18px;
+      padding:14px;
+      border-radius:12px;
+      background: rgba(255,255,255,0.78);
+      font-size:0.9rem;
+      color:#333;
+    }
+    body.dark .sources { background: rgba(30,30,30,0.7); color:#ddd; }
+
+    @media (max-width:700px) {
+      header h1 { font-size:1rem; }
+      header img { width:48px; }
+      .num { min-width:34px; height:34px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="left">
+      <img src="images__1_-removebg-preview.png" alt="Logo del Instituto" id="logo">
+    </div>
+
+    <h1>Mi portafolio — Cuestionario II</h1>
+
+    <button class="theme-toggle" id="themeBtn" title="Cambiar tema">🌙</button>
+  </header>
+
+  <main class="wrap" role="main">
+    
+    
+
+    <div class="qa" id="qaList">
+
+      <details class="q" data-idx="1">
+        <summary><span class="num">1</span>&nbsp; ¿Qué se entiende por arquitectura de una aplicación móvil y cuáles son sus factores clave?</summary>
+        <p class="answer">
+          La arquitectura de una aplicacion movil es la forma en que se organiza su diseño tecnico, sus factores clave son la escalabilidad, seguridad, usabilidad y el rendimiento.
+        </p>
+      </details>
+
+      <details class="q" data-idx="2">
+        <summary><span class="num">2</span>&nbsp; ¿Qué diferencia existe entre aplicaciones nativas, web móviles e híbridas?</summary>
+        <p class="answer">
+          Las apps nativas se desarrollan para un sistema especifico, las web moviles corren en el navegador y las hibridas combinan elementos de ambas.
+        </p>
+      </details>
+
+      <details class="q" data-idx="3">
+        <summary><span class="num">3</span>&nbsp; Menciona dos ventajas y dos desventajas de las aplicaciones nativas.</summary>
+        <p class="answer">
+          Ventajas: 1) Mejor rendimiento y experiencia UI/UX; 2) Acceso completo a hardware y APIs nativas.  
+          Desventajas: 1) Mayor coste y tiempo de desarrollo por plataforma; 2) Mayor mantenimiento (dos bases de código separadas).
+        </p>
+      </details>
+
+      <details class="q" data-idx="4">
+        <summary><span class="num">4</span>&nbsp; Explica las principales limitaciones de las aplicaciones web móviles.</summary>
+        <p class="answer">
+          Las web moviles dependen mucho de la conexion, tienen menor rendimiento y acceso limitado al hardware del dispositivo.
+        </p>
+      </details>
+
+      <details class="q" data-idx="5">
+        <summary><span class="num">5</span>&nbsp; ¿Por qué las aplicaciones híbridas representan un balance entre costo y rendimiento?</summary>
+        <p class="answer">
+          Porque integran el menor costo de desarrollo con un rendimiento aceptable, sirven como equilibrio entre ambas opciones.
+        </p>
+      </details>
+
+      <details class="q" data-idx="6">
+        <summary><span class="num">6</span>&nbsp; ¿Qué papel cumple la arquitectura Wireless Internet en la conectividad móvil moderna?</summary>
+        <p class="answer">
+          La arquitectura Wireless Internet permite que los dispositivos se conecten sin cables, lo que hace posible la movilidad moderna.
+        </p>
+      </details>
+
+      <details class="q" data-idx="7">
+        <summary><span class="num">7</span>&nbsp; ¿Cuáles son los principales modos de conexión en aplicaciones móviles y cómo afectan la experiencia del usuario?</summary>
+        <p class="answer">
+          Los modos de conexion son WiFi, datos moviles y bluetooth, afectan la velocidad, la estabilidad y la calidad de la experiencia del usuario.
+        </p>
+      </details>
+
+      <details class="q" data-idx="8">
+        <summary><span class="num">8</span>&nbsp; Da un ejemplo de cómo una aplicación bancaria gestiona la sincronización en entornos con poca conectividad.</summary>
+        <p class="answer">
+          Un banco permite usar la app offline guardando datos temporales, y cuando regresa la conexion se sincronizan las operaciones.
+        </p>
+      </details>
+
+      <details class="q" data-idx="9">
+        <summary><span class="num">9</span>&nbsp; ¿Qué caracteriza a la arquitectura Smart Client y en qué se diferencia de un cliente liviano?</summary>
+        <p class="answer">
+          Smart Client combina procesamiento local y en servidor, se diferencia del cliente liviano porque este ultimo depende casi todo del servidor.
+      </details>
+
+      <details class="q" data-idx="10">
+        <summary><span class="num">10</span>&nbsp; ¿Cuáles son las principales ventajas del enfoque Smart Client en aplicaciones móviles?</summary>
+        <p class="answer">
+          Ventajas: permite trabajar offline y ofrece mejor experiencia al combinar potencia local con servicios online.
+        </p>
+      </details>
+
+      <details class="q" data-idx="11">
+        <summary><span class="num">11</span>&nbsp; Menciona dos retos técnicos del desarrollo bajo el modelo Smart Client.</summary>
+        <p class="answer">
+          1) Sincronización y resolución de conflictos entre estado local y servidor.  
+          2) Gestión de seguridad local (almacenamiento seguro de credenciales/datos, cifrado).
+        </p>
+      </details>
+
+      <details class="q" data-idx="12">
+        <summary><span class="num">12</span>&nbsp; ¿Qué es la arquitectura Messaging y qué rol cumplen las colas de mensajes y los message brokers?</summary>
+        <p class="answer">
+          La arquitectura Messaging permite comunicacion entre sistemas, las colas almacenan mensajes y los brokers los distribuyen de manera ordenada.
+        </p>
+      </details>
+
+      <details class="q" data-idx="13">
+        <summary><span class="num">13</span>&nbsp; Explica los beneficios de la comunicación asíncrona en aplicaciones móviles.</summary>
+        <p class="answer">
+          La comunicacion asincrona evita esperas, mejora la velocidad y permite procesar tareas en segundo plano.  
+        </p>
+      </details>
+
+      <details class="q" data-idx="14">
+        <summary><span class="num">14</span>&nbsp; ¿Qué desafíos implica garantizar la entrega de mensajes en arquitecturas de mensajería?</summary>
+        <p class="answer">
+          El desafio es asegurar que los mensajes lleguen completos, sin duplicados y en el orden correcto.
+        </p>
+      </details>
+
+      <details class="q" data-idx="15">
+        <summary><span class="num">15</span>&nbsp; ¿Qué son las aplicaciones basadas en localización (LBS) y qué tecnologías permiten determinar la ubicación del usuario?</summary>
+        <p class="answer">
+          Las LBS son apps basadas en localizacion, usan GPS, torres de telefonia y WiFi para ubicar al usuario.
+        </p>
+      </details>
+
+      <details class="q" data-idx="16">
+        <summary><span class="num">16</span>&nbsp; Cita un ejemplo de aplicación de transporte y uno de entretenimiento que utilicen servicios basados en localización.</summary>
+        <p class="answer">
+          Transporte: Uber/DiDi (geolocalización para origen/destino y seguimiento).  
+          Entretenimiento: Pokémon GO (experiencias AR y eventos basados en ubicación) o apps de recomendaciones locales como Foursquare.
+        </p>
+      </details>
+
+      <details class="q" data-idx="17">
+        <summary><span class="num">17</span>&nbsp; ¿Cuáles son los principales retos de las LBS relacionados con privacidad y consumo de batería?</summary>
+        <p class="answer">
+          cuidar la privacidad de la ubicacion y evitar alto consumo de bateria por el GPS.
+        </p>
+      </details>
+
+      <details class="q" data-idx="18">
+        <summary><span class="num">18</span>&nbsp; Explica cómo la geolocalización puede transformar modelos de negocio digitales.</summary>
+        <p class="answer">
+          La geolocalizacion permite a empresas ofrecer publicidad segmentada, servicios personalizados y nuevos modelos de negocio.
+        </p>
+      </details>
+
+      <details class="q" data-idx="19">
+        <summary><span class="num">19</span>&nbsp; ¿Por qué la arquitectura móvil es clave para la escalabilidad y el éxito de una aplicación?</summary>
+        <p class="answer">
+          Es clave porque una buena arquitectura asegura que la app soporte mas usuarios, funciones y siga siendo eficiente.
+        </p>
+      </details>
+
+      <details class="q" data-idx="20">
+        <summary><span class="num">20</span>&nbsp; Según el documento, ¿qué pilares deben guiar el diseño arquitectónico de aplicaciones móviles modernas?</summary>
+        <p class="answer">
+          Los pilares son escalabilidad, seguridad, rendimiento, experiencia de usuario y flexibilidad en el diseño.
+        </p>
+      </details>
+
+    </div>
+
+    
+
+  <script>
+    // Tema
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      themeBtn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    });
+
+    // Buscador que filtra preguntas por texto
+    const searchInput = document.getElementById('searchInput');
+    const qaList = document.getElementById('qaList');
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value.trim().toLowerCase();
+        const items = qaList.querySelectorAll('details.q');
+        items.forEach(item => {
+          const summary = item.querySelector('summary').innerText.toLowerCase();
+          const answer = item.querySelector('.answer').innerText.toLowerCase();
+          const visible = (!q) || summary.includes(q) || answer.includes(q);
+          item.style.display = visible ? '' : 'none';
+        });
+      });
+    }
+
+    // Expandir / contraer TODO
+    document.getElementById('expandAllBtn').addEventListener('click', () => {
+      qaList.querySelectorAll('details.q').forEach(d => d.open = true);
+    });
+    document.getElementById('collapseAllBtn').addEventListener('click', () => {
+      qaList.querySelectorAll('details.q').forEach(d => d.open = false);
+    });
+
+    // Imprimir
+    document.getElementById('printBtn').addEventListener('click', () => {
+      window.print();
+    });
+
+    // Accesibilidad: toggle con Enter / Space
+    document.querySelectorAll('details.q summary').forEach(s => {
+      s.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const d = s.parentElement;
+          d.open = !d.open;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
